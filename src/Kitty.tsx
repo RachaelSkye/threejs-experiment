@@ -1,6 +1,6 @@
 import React from "react";
 import * as THREE from 'three';
-import { BackSide } from "three";
+import { BackSide, RGBAFormat } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import {GLTF, GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -9,138 +9,185 @@ import {GLTF, GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
 			async function init(canvas: HTMLCanvasElement) {
 
+        // Initial CAMERA positioning
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const camera = new THREE.PerspectiveCamera(45, width/height, 1, 10000);
+        const camera = new THREE.PerspectiveCamera(45, width/height, 1, 20000);
         camera.position.y = 200;
         camera.position.z = 400;
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         // camera.getWorldDirection(model.scene.position)
 
+        
+
 				const scene = new THREE.Scene();
 
+        // LIGHTING
         const lightH = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
         scene.add(lightH)
-        // scene.add( new THREE.AmbientLight( 0x222222 ) );
 
-				const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
-				light.position.set( 200, 450, 500 );
+				const light = new THREE.DirectionalLight( 0xffffbb, 0.5 );
 
 				light.castShadow = true;
 
-				light.shadow.mapSize.width = 1024;
-				light.shadow.mapSize.height = 512;
+				light.shadow.mapSize.width = 10000;
+				light.shadow.mapSize.height = 10000;
 
-				light.shadow.camera.near = 100;
-				light.shadow.camera.far = 1200;
+				light.shadow.camera.near = 1000;
+				light.shadow.camera.far = 10000;
 
-				light.shadow.camera.left = - 1000;
-				light.shadow.camera.right = 1000;
-				light.shadow.camera.top = 350;
-				light.shadow.camera.bottom = - 350;
+				light.shadow.camera.left = -10000;
+				light.shadow.camera.right = 10000;
+				light.shadow.camera.top = 10000;
+				light.shadow.camera.bottom = -10000;
         scene.add( light );
 
+
+        // RENDERER
         const renderer = new THREE.WebGLRenderer( { antialias: true, canvas, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize(width, height, false);
 
 
+        // CAMERA CONTROLS
+        const controls = new OrbitControls( camera, renderer.domElement );
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
+        controls.maxPolarAngle = Math.PI/3 * 1.42;
+        controls.maxDistance = 10000
+        controls.addEventListener( 'change', render );
         
 
+        // GEOMETRIES
+        const innerSphereGeometry = new THREE.SphereGeometry( 2000, 200, 200 );
+        const innerSphereMaterial = new THREE.MeshBasicMaterial( { color: "rgba(255, 255, 25)"} );
+        const innerSphere = new THREE.Mesh( innerSphereGeometry, innerSphereMaterial );
+        innerSphere.position.set(0, 4000, 0);
+
+        scene.add( innerSphere );
+        light.position.set(innerSphere.position.x, innerSphere.position.y, innerSphere.position.z)
+        scene.add(light)
 
 
-
-        // const sphereGeometry = new THREE.SphereGeometry( 10000 );
-        // const sphereMaterial = new THREE.MeshBasicMaterial( { color:  "#ECF1F8"} );
-        // const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-        // scene.add( sphere );
-
-        const boxGeometry = new THREE.BoxGeometry( 2000, 2000, 2000 );
+        const boxGeometry = new THREE.BoxGeometry( 10000, 10000, 10000 );
         const textureLoader = new THREE.TextureLoader();
         const texture = textureLoader.load("sky.jpg")
-        const boxMaterial = new THREE.MeshBasicMaterial( { color: "#ECF1F8", side: BackSide, map: texture } );
+        const boxMaterial = new THREE.MeshBasicMaterial( { side: BackSide, map: texture } );
         const cube = new THREE.Mesh( boxGeometry, boxMaterial );
-        
         cube.receiveShadow = true;
-        cube.castShadow = true;
+        cube.position.y = 1000;
         scene.add( cube );
 
-        const loader = new GLTFLoader();
-        const model = await loader.loadAsync('cartoon-cats/glTF_pink_kawaii/CuteCat_glTF.gltf');
-        const mixer = new THREE.AnimationMixer( model.scene );
-        const run = model.animations.find(clip => clip.name === "run");
-        const jump = model.animations.find(clip => clip.name === "jump");
-        // const position = model.scene.getWorldPosition(model.scene.position);
-        let running = false;
-
-        document.addEventListener("keydown", (ev) => {
-          running = true;
-          if(ev.code === "KeyW"){
-            if(run) mixer.clipAction(run).play();
-            model.scene.translateZ(5);
-          }
-
-          if(ev.code === "KeyS"){
-            if(run) mixer.clipAction(run).play();
-            model.scene.translateZ(-5);
-          }
-
-          if(ev.code === "KeyA"){
-            if(run) mixer.clipAction(run).play();
-            model.scene.translateX(-5);
-          }
-
-          if(ev.code === "KeyD"){
-            running = false;
-            if(run) mixer.clipAction(run).play();
-            model.scene.translateX(5);
-          }
-
-          // TODO: jumping needs a lot of work
-          // if(ev.code === "Space"){
-          //   if(jump) mixer.clipAction(jump).play();
-          //   model.scene.translateY(10);
-          //   if(mixer) mixer.update(0.03);
-          // }
-
-        });
-
-        model.scene.addEventListener("", (ev) => {
-          console.log(ev)
-        })
-
-        document.addEventListener("keyup", (ev) => {
-          if(run) mixer.clipAction(run).stop();
-        });
-
-        model.scene.castShadow = true;
-        camera.lookAt(model.scene.position);
-
-        scene.add(model.scene);
-        render()
-        
-
-        const planeGeometry = new THREE.PlaneGeometry( 2000, 2000, 32, 32 );
+        const planeGeometry = new THREE.PlaneGeometry( 2000, 2000 );
         const planeMaterial = new THREE.MeshToonMaterial( { color: "#238E47"} )
         const plane = new THREE.Mesh( planeGeometry, planeMaterial );
         plane.receiveShadow = true;
         plane.lookAt(new THREE.Vector3(0,Math.PI/2,0))
         scene.add( plane );
 
-        const controls = new OrbitControls( camera, renderer.domElement );
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.25;
-        controls.enableZoom = true;
-        controls.maxPolarAngle = Math.PI/3 * 1.5;
 
-        renderer.setAnimationLoop(() => {
-          renderer.render(scene, camera);
-          controls.update();
-          if(mixer) {
-            if(running) {
-              mixer.update(0.07);
+        // MODEL
+
+        const loader = new GLTFLoader();
+        const model = await loader.loadAsync('cartoon-cats/glTF_pink_kawaii/CuteCat_glTF.gltf');
+        model.scene.castShadow = true;
+        model.scene.receiveShadow = true;
+        scene.add(model.scene);
+
+        // const position = model.scene.getWorldPosition(model.scene.position);
+
+        // ANIMATIONS
+        const mixer = new THREE.AnimationMixer( model.scene );
+        const attack1 = model.animations.find(clip => clip.name === "attack1");
+        const attack2 = model.animations.find(clip => clip.name === "attack2");
+        const dmg1 = model.animations.find(clip => clip.name === "dmg1");
+        const dmg2 = model.animations.find(clip => clip.name === "dmg2");
+        const falls1 = model.animations.find(clip => clip.name === "falls1");
+        const falls2 = model.animations.find(clip => clip.name === "falls2");
+        const falls3 = model.animations.find(clip => clip.name === "falls3");
+        const idle1 = model.animations.find(clip => clip.name === "idle1");
+        const idle2 = model.animations.find(clip => clip.name === "idle2");
+        const happy = model.animations.find(clip => clip.name === "happy");
+        const jump = model.animations.find(clip => clip.name === "jump");
+        const no = model.animations.find(clip => clip.name === "no");
+        const run = model.animations.find(clip => clip.name === "run");
+        const run2 = model.animations.find(clip => clip.name === "run2");
+        const wakesup = model.animations.find(clip => clip.name === "wakesup");
+        const walk = model.animations.find(clip => clip.name === "walk");
+        const waving = model.animations.find(clip => clip.name === "waving");
+        const yes = model.animations.find(clip => clip.name === "yes");
+
+
+        //ACTIONS
+        // const inBoundary = (model.scene.position.z <= 980 && model.scene.position.z >= -980) ||  (model.scene.position.x <= 980 &&  model.scene.position.x >= -980)
+        const inBoundary = (model.scene.position.z <= 980 && model.scene.position.z >= -980)
+
+        if(idle2) mixer.clipAction(idle2).play();
+        document.addEventListener("keydown", (ev) => {
+          console.log(model.scene.position.z)
+          if(idle2) mixer.clipAction(idle2).stop();
+          if(inBoundary){
+
+            // WALK
+            if(ev.code === "KeyW"){
+              if(walk) mixer.clipAction(walk).play();
+              model.scene.translateZ(5);
+            }
+  
+            if(ev.code === "KeyS"){
+              if(walk) mixer.clipAction(walk).play();
+              model.scene.translateZ(-5);
+            }
+  
+            //RUN
+            if(ev.code === "ShiftLeft"){
+              if(run) mixer.clipAction(run).play();
+              model.scene.translateZ(10);
             }
           }
+
+
+          //ROTATE
+          if(ev.code === "KeyA"){
+            if(walk) mixer.clipAction(walk).play();
+            model.scene.rotateY(-0.1);
+
+          }
+
+          if(ev.code === "KeyD"){
+            if(walk) mixer.clipAction(walk).play();
+            model.scene.rotateY(0.1);
+          }
+
+          if(ev.code === "Space"){
+            if(jump) mixer.clipAction(jump).play();
+            model.scene.translateY(20);
+            model.scene.translateZ(5);
+          }
+
+        });
+
+        document.addEventListener("keyup", (ev) => {
+          if(run) mixer.clipAction(run).stop();
+          if(walk) mixer.clipAction(walk).stop();
+          if(jump) mixer.clipAction(jump).stop();
+          if(ev.code === "Space") model.scene.translateY(-20);
+          if(model.scene.position.y > 0) model.scene.position.y = 0;
+          if(idle2) mixer.clipAction(idle2).play();
+
+        });
+
+        // ANIMATION LOOP
+        renderer.setAnimationLoop(() => {
+          // console.log(model.scene.position);
+
+          controls.update();
+          if(mixer) {
+            mixer.update(0.07);
+          }
+          camera.lookAt(model.scene.position.x, 0, model.scene.position.z);
+          render();
         })
 
         function render() {
