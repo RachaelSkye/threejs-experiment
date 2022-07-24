@@ -2,7 +2,7 @@ import React from "react";
 import * as THREE from 'three';
 import { BackSide } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
+import {GLTF, GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
 
 
@@ -45,6 +45,11 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
         renderer.setSize(width, height, false);
 
 
+        
+
+
+
+
         // const sphereGeometry = new THREE.SphereGeometry( 10000 );
         // const sphereMaterial = new THREE.MeshBasicMaterial( { color:  "#ECF1F8"} );
         // const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
@@ -64,7 +69,49 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
         const model = await loader.loadAsync('cartoon-cats/glTF_pink_kawaii/CuteCat_glTF.gltf');
         const mixer = new THREE.AnimationMixer( model.scene );
         const run = model.animations.find(clip => clip.name === "run");
+        const jump = model.animations.find(clip => clip.name === "jump");
         // const position = model.scene.getWorldPosition(model.scene.position);
+        let running = false;
+
+        document.addEventListener("keydown", (ev) => {
+          running = true;
+          if(ev.code === "KeyW"){
+            if(run) mixer.clipAction(run).play();
+            model.scene.translateZ(5);
+          }
+
+          if(ev.code === "KeyS"){
+            if(run) mixer.clipAction(run).play();
+            model.scene.translateZ(-5);
+          }
+
+          if(ev.code === "KeyA"){
+            if(run) mixer.clipAction(run).play();
+            model.scene.translateX(-5);
+          }
+
+          if(ev.code === "KeyD"){
+            running = false;
+            if(run) mixer.clipAction(run).play();
+            model.scene.translateX(5);
+          }
+
+          // TODO: jumping needs a lot of work
+          // if(ev.code === "Space"){
+          //   if(jump) mixer.clipAction(jump).play();
+          //   model.scene.translateY(10);
+          //   if(mixer) mixer.update(0.03);
+          // }
+
+        });
+
+        model.scene.addEventListener("", (ev) => {
+          console.log(ev)
+        })
+
+        document.addEventListener("keyup", (ev) => {
+          if(run) mixer.clipAction(run).stop();
+        });
 
         model.scene.castShadow = true;
         camera.lookAt(model.scene.position);
@@ -86,22 +133,19 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
         controls.enableZoom = true;
         controls.maxPolarAngle = Math.PI/3 * 1.5;
 
-
-
-
-
         renderer.setAnimationLoop(() => {
           renderer.render(scene, camera);
           controls.update();
-          if(mixer) mixer.update(0.04);
+          if(mixer) {
+            if(running) {
+              mixer.update(0.07);
+            }
+          }
         })
 
         function render() {
           renderer.render( scene, camera );
         }
-
-        return {clip: run, mixer, model}
-
 
 			}
 
@@ -110,52 +154,16 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 
       export function Kitty() {
         const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null);
-        const [clip, setClip] = React.useState<THREE.AnimationClip>();
-        const [model, setModel] = React.useState();
-        const [mixer, setMixer] = React.useState<THREE.AnimationMixer>();
-
-        const keyDownListener = () => (ev: KeyboardEvent) => {
-          ev.preventDefault()
-          console.log(clip)
-          console.log(mixer)
-
-          let distance = 1
-          while (ev.code === "KeyW") {
-            if(clip && mixer) mixer.clipAction(clip).play();
-            
-            // if(model) model.scene.translateX(distance ++);
-          }
-        }
-
-        const keyUpListener = (ev: KeyboardEvent) => {
-          ev.preventDefault()
-
-          if(ev.code === "KeyW"){
-            if(clip && mixer) mixer.clipAction(clip).stop();
-          }
-        }
 
         const _init = async () => {
           if(canvas){
-            const {clip, mixer, model} = await init(canvas);
-            setClip(clip);
-            setMixer(mixer);
-            // setModel(model);
+            await init(canvas);
           }
         }
         
         React.useEffect(() => {
-          document.addEventListener("keydown", keyDownListener);
-          document.addEventListener("keyup", keyUpListener);
-          _init();
-
-         return (
-          document.removeEventListener("keyup", keyUpListener),
-          document.removeEventListener("keydown", keyDownListener)
-         )
-
-
-        },[canvas])
+          if(canvas) _init();
+        },[canvas]);
       
       return (
       <canvas ref={element => setCanvas(element)} />
