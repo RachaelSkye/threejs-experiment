@@ -68694,7 +68694,7 @@
 		},
 		{
 			"mimeType": "image/png",
-			"uri": "CC_02_A.png"
+			"uri": "CC_04_C.png"
 		}
 	],
 	"materials": [
@@ -68720,7 +68720,7 @@
 			}
 		},
 		{
-			"name": "CC_eye_07",
+			"name": "CC_eye_01",
 			"pbrMetallicRoughness": {
 				"baseColorTexture": {
 					"index": 2
@@ -68730,7 +68730,7 @@
 			}
 		},
 		{
-			"name": "CC_02_A",
+			"name": "CC_04_C_C",
 			"pbrMetallicRoughness": {
 				"baseColorTexture": {
 					"index": 3
@@ -69963,7 +69963,7 @@
 			"source": 2
 		},
 		{
-			"name": "CC_02_A.png",
+			"name": "CC_04_C_C.png",
 			"sampler": 0,
 			"source": 3
 		}

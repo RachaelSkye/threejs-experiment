@@ -68690,11 +68690,11 @@
 		},
 		{
 			"mimeType": "image/png",
-			"uri": "CC_eye_04.png"
+			"uri": "CC_eye_01.png"
 		},
 		{
 			"mimeType": "image/png",
-			"uri": "CC_09_C.png"
+			"uri": "CC_10_C.png"
 		}
 	],
 	"materials": [
@@ -68720,7 +68720,7 @@
 			}
 		},
 		{
-			"name": "CC_eye_04",
+			"name": "CC_eye_01",
 			"pbrMetallicRoughness": {
 				"baseColorTexture": {
 					"index": 2
@@ -68730,7 +68730,7 @@
 			}
 		},
 		{
-			"name": "CC_09_C",
+			"name": "CC_10_C_C",
 			"pbrMetallicRoughness": {
 				"baseColorTexture": {
 					"index": 3
@@ -69958,12 +69958,12 @@
 			"source": 1
 		},
 		{
-			"name": "CC_eye_04.png",
+			"name": "CC_eye_01.png",
 			"sampler": 0,
 			"source": 2
 		},
 		{
-			"name": "CC_09_C.png",
+			"name": "CC_10_C_C.png",
 			"sampler": 0,
 			"source": 3
 		}
