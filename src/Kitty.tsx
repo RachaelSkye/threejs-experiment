@@ -16,7 +16,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
         const height = window.innerHeight;
         const camera = new THREE.PerspectiveCamera(45, width/height, 1, 20000);
         camera.position.y = 200;
-        camera.position.z = 400;
+        camera.position.z = -400;
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.layers.enable(1)
         // camera.getWorldDirection(model.scene.position)
@@ -56,8 +56,8 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
         controls.enableZoom = true;
-        // controls.maxPolarAngle = Math.PI/3 * 1.42;
-        // controls.maxDistance = 10000
+        controls.maxPolarAngle = Math.PI/3 * 1.42;
+        controls.maxDistance = 1000
         controls.minDistance = 200
         // controls.addEventListener( 'change', render );
         
@@ -74,42 +74,85 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
         //   light.position.set(glowOrb.position.x, glowOrb.position.y, glowOrb.position.z);
         // }
 
-        const geometry = new THREE.IcosahedronGeometry( 1, 15 )
+        // const geometry = new THREE.IcosahedronGeometry( 1, 15 )
 
-        for ( let i = 0; i < 500; i ++ ) {
+        const geometry = new THREE.SphereGeometry( 1 )
+        const color = new THREE.Color();
+        color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
 
-					const color = new THREE.Color();
-					color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
-          
-					const material = new THREE.MeshBasicMaterial( { color: color } );
+        for ( let i = 0; i < 250; i ++ ) {
+          const color = new THREE.Color();
+          color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
+        
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
 					const sphere = new THREE.Mesh( geometry, material );
-					sphere.position.x = Math.random() * 500 - 5;
-					sphere.position.y = Math.random() * 500 - 5;
-					sphere.position.z = Math.random() * 500 - 5;
-					// sphere.position.normalize().multiplyScalar( Math.random() * 4.0 + 2.0 );
-					// sphere.scale.setScalar( Math.random() * Math.random() + 0.5 );
-          // const light_i = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.9 );
-          // light_i.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
-          // scene.add(light_i)
+					sphere.position.x = Math.random() * 1500 - 50;
+					sphere.position.y = Math.random() * 1500 - 50;
+					sphere.position.z = Math.random() * 1500 - 50;
 					sphere.layers.enable(1);
 					scene.add( sphere );
 				}
 
-        for ( let i = 0; i < 500; i ++ ) {
-
-					const color = new THREE.Color();
-					color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
-          
-					const material = new THREE.MeshBasicMaterial( { color: color } );
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
 					const sphere = new THREE.Mesh( geometry, material );
-					sphere.position.x = - Math.random() * 500 - 5;
-					sphere.position.y = - Math.random() * 500 - 5;
-					sphere.position.z = - Math.random() * 500 - 5;
-					// sphere.position.normalize().multiplyScalar( Math.random() * 4.0 + 2.0 );
-					// sphere.scale.setScalar( Math.random() * Math.random() + 0.5 );
-          // const light_i = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.9 );
-          // light_i.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
-          // scene.add(light_i)
+					sphere.position.x = - Math.random() * 1500 - 50;
+					sphere.position.y = - Math.random() * 1500 - 50;
+					sphere.position.z = - Math.random() * 1500 - 50;
+					sphere.layers.enable(1);
+					scene.add( sphere );
+				}
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+					const sphere = new THREE.Mesh( geometry, material );
+					sphere.position.x = - Math.random() * 1500 - 50;
+					sphere.position.y =  Math.random() * 1500 - 50;
+					sphere.position.z =  Math.random() * 1500 - 50;
+					sphere.layers.enable(1);
+					scene.add( sphere );
+				}
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+					const sphere = new THREE.Mesh( geometry, material );
+					sphere.position.x =  Math.random() * 1500 - 50;
+					sphere.position.y = - Math.random() * 1500 - 50;
+					sphere.position.z =  Math.random() * 1500 - 50;
+					sphere.layers.enable(1);
+					scene.add( sphere );
+				}
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+					const sphere = new THREE.Mesh( geometry, material );
+					sphere.position.x =  Math.random() * 1500 - 50;
+					sphere.position.y =  Math.random() * 1500 - 50;
+					sphere.position.z = - Math.random() * 1500 - 50;
+					sphere.layers.enable(1);
+					scene.add( sphere );
+				}
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+					const sphere = new THREE.Mesh( geometry, material );
+					sphere.position.x =  Math.random() * 1500 - 50;
+					sphere.position.y = - Math.random() * 1500 - 50;
+					sphere.position.z = - Math.random() * 1500 - 50;
+					sphere.layers.enable(1);
+					scene.add( sphere );
+				}
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+					const sphere = new THREE.Mesh( geometry, material );
+					sphere.position.x = - Math.random() * 1500 - 50;
+					sphere.position.y =  Math.random() * 1500 - 50;
+					sphere.position.z = - Math.random() * 1500 - 50;
+					sphere.layers.enable(1);
+					scene.add( sphere );
+				}
+        for ( let i = 0; i < 250; i ++ ) {
+					const material = new THREE.MeshBasicMaterial( { color: "#ffffff" } );
+					const sphere = new THREE.Mesh( geometry, material );
+					sphere.position.x = - Math.random() * 1500 - 50;
+					sphere.position.y = - Math.random() * 1500 - 50;
+					sphere.position.z =  Math.random() * 1500 - 50;
 					sphere.layers.enable(1);
 					scene.add( sphere );
 				}
@@ -152,15 +195,10 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 
 
         //BLOOM
-			const ENTIRE_SCENE = 0, BLOOM_SCENE = 1;
-
 			const renderScene = new RenderPass( scene, camera )
 
         
-      const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 20, 1, 0 )
-      // bloomPass.threshold = 0
-      // bloomPass.strength = 20
-      // bloomPass.radius = 1
+      const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 10, 1.4, 0 )
         
       const composer = new EffectComposer( renderer )
       composer.setSize( window.innerWidth, window.innerHeight )
